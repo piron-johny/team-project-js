@@ -3,15 +3,15 @@
 <form action="POST" class="form" id="login-form-post">
   <label>
     <span>Name:</span>
-    <input type="text" name="userName" class="form__input" />
+    <input type="text" name="userName" class="form__input" data-post="userName" />
   </label>
   <label>
     <span>Email:</span>
-    <input type="email" name="userEmail" class="form__input" />
+    <input type="email" name="userEmail" class="form__input" data-post="userEmail" />
   </label>
   <label>
     <span>Password:</span>
-    <input type="password" name="userPassword" class="form__input" />
+    <input type="password" name="userPassword" class="form__input" data-post="userPassword" />
   </label>
   <button type="submit" class="form__btn btn">Send</button>
 </form>
@@ -19,11 +19,11 @@
 <form action="GET" class="form" id="login-form-get">
   <label>
     <span>Email:</span>
-    <input type="text" name="userEmail" class="form__input" />
+    <input type="text" name="userEmail" class="form__input" data-get="userEmail" />
   </label>
   <label>
     <span>Password:</span>
-    <input type="text" name="userPassword" class="form__input" />
+    <input type="text" name="userPassword" class="form__input" data-get="userPassword" />
   </label>
   <button type="submit" class="form__btn btn">Send</button>
 </form>
