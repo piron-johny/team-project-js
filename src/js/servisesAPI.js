@@ -1,5 +1,6 @@
 import axios from 'axios';
 const KEY = '2cf91cf1fed5026ae9524dc97ad33068';
+// const DATA_URL = 'https://team-project-1da18-default-rtdb.europe-west1.firebasedatabase.app';
 
 function getUserId() {
   const USER_ID = localStorage.getItem('userID');
@@ -11,19 +12,17 @@ async function userInfo(id) {
     `https://team-project-1da18-default-rtdb.europe-west1.firebasedatabase.app/users/${id}.json`,
   );
   const dadaUser = data.data;
-  console.log(dadaUser);
-}
+  return dadaUser;
 
-// user(USER_ID);
+  console.log(dadaUser); // удалить
+}
 
 async function getMuvies() {
   const dataMuvies = await axios.get(
     `https://api.themoviedb.org/3/trending/all/week?api_key=${KEY}&language=en-US`,
   );
-  console.log(dataMuvies.data.results.filter(el => el.original_title));
   return dataMuvies;
 }
-// getMuvies();
 
 async function getMoviesInfo(id) {
   const moviesInformation = await axios.get(
@@ -45,7 +44,7 @@ async function genresList(idGenres) {
       }
     });
   });
-  // console.log('arr', arrayOfGenres);
+  // console.log('arr', arrayOfGenres); // удалить
 
   return;
 }

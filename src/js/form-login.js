@@ -1,11 +1,12 @@
+import { getUserId } from './servisesAPI';
+import { userInfo } from './servisesAPI';
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
 const axios = require('axios');
 
 const formReg = document.querySelector('#login-form-post');
 const formLog = document.querySelector('#login-form-get');
 const SERVER_URL =
-  'https://team-project-1da18-default-rtdb.europe-west1.firebasedatabase.app/users.json';
-const arrayOfUserEmail = [];
-const arrayOfUserPass = [];
+  'https://team-project-1da18-default-rtdb.europe-west1.firebasedatabase.app/users';
 
 let USER_ID = '';
 
@@ -19,45 +20,45 @@ async function onRegistrationForm(e) {
   const email = e.target.elements.userEmail.value;
   const password = e.target.elements.userPassword.value;
 
-  console.log('input.value', email);
+  console.log('input.value', email); // удалить
   e.target.reset();
-  await getUser();
-
-  // console.log('Массив', arrayOfUserEmail);
-  // console.log('Есть или такой ?', arrayOfUserEmail.includes(email));
-
-  if (arrayOfUserEmail.includes(email)) {
-    console.log('Есть такой Email');
-  } else {
-    console.log('Запись в базу данных');
-    // postRegistration(name, email, password);
-  }
-  arrayOfUserEmail.length = 0;
+  await getUser(email).then(data => {
+    const arrayOfEmail = [];
+    data.forEach(el => {
+      if (el.email === email) {
+        Notify.info('Email занят!');
+      }
+      arrayOfEmail.push(el.email);
+    });
+    if (!arrayOfEmail.includes(email)) {
+      Notify.success(`Спсибо за регистрацию! ${name}`);
+      // //     // postRegistration(name, email, password); // записывает нового пользователя в базу данных
+      arrayOfEmail.length = 0;
+    }
+  });
 }
 
 async function onLoginForm(e) {
   e.preventDefault();
   const email = e.target.elements.userEmail.value;
   const password = e.target.elements.userPassword.value;
-  await getUser();
+  // await getUser();
 
-  // console.log('email', email);
-  // console.log('password', password);
-  // console.log('arrayOfUserPass', arrayOfUserPass);
-  // console.log('arrayOfUserEmail', arrayOfUserEmail);
+  localStorage.removeItem('userID');
+  await postUserId(email, password);
+  const userId = await getUserId();
 
-  if (arrayOfUserEmail.includes(email) && arrayOfUserPass.includes(password)) {
-    console.log('Добро пожаловать!');
+  userInfo(userId).then(data => {
+    if (!data) {
+      Notify.info('Пароль или Email введены не верно!');
+      return;
+    } else if (data.email === email && data.pass === password) {
+      Notify.success(`Добро пожаловать ${data.name}`);
+    }
+  });
+  e.target.reset();
 
-    // console.log(console.log('USER_ID', USER_ID));
-
-    // arrayOfUserPass.length = 0;
-    // arrayOfUserEmail.length = 0;
-
-    return await getUserId(email, password);
-  } else {
-    console.log('Пароль или Email введены не верно!');
-  }
+  return;
 }
 
 function postRegistration(name, email, pass) {
@@ -72,32 +73,28 @@ function postRegistration(name, email, pass) {
   }
 }
 
-async function getUser() {
-  const data = await axios.get(SERVER_URL);
+async function getUser(email) {
+  const data = await axios.get(`${SERVER_URL}.json`);
   const valuesOfData = Object.values(data.data);
-  valuesOfData.forEach(user => arrayOfUserEmail.push(user.email));
-  valuesOfData.forEach(user => arrayOfUserPass.push(user.pass));
-  return;
+
+  return valuesOfData;
 }
 
-async function getUserId(email, pass) {
-  const data = await axios.get(SERVER_URL);
-  const DataID = Object.keys(data.data);
-  const DataIDValues = Object.values(data.data);
+async function postUserId(email, pass) {
+  const data = await axios.get(`${SERVER_URL}.json`);
   const DataIDEntries = Object.entries(data.data);
 
-  // console.log('DataID', DataID);
-  // console.log('DataIDValues', DataIDValues);
   // console.log('DataIDEntries', DataIDEntries);
 
-  const aaa = DataIDValues.find(el => el.email === email);
-  const bbb = DataIDValues.find(el => el.pass === pass);
-  const ddd = DataIDEntries.find(el => el[1] === aaa && bbb);
+  const arrayOfUser = await DataIDEntries.find(el => {
+    if (el[1].pass === pass && el[1].email === email) return el;
+  });
 
-  // console.log('aaa', aaa);
-  // console.log('bbb', bbb);
-  console.log('id ---->', ddd[0]);
-  USER_ID = ddd[0];
-  localStorage.setItem('userID', USER_ID);
+  // console.log('arrayOfUser', arrayOfUser);
+  if (arrayOfUser) {
+    console.log('id ---->', arrayOfUser[0]);
+    USER_ID = arrayOfUser[0];
+    localStorage.setItem('userID', USER_ID);
+  }
   return;
 }
