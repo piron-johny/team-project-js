@@ -21,13 +21,15 @@ async function onRegistrationForm(e) {
   const password = e.target.elements.userPassword1.value;
   const passwordTwo = e.target.elements.userPassword2.value;
 
+  if (!name || !email || !password || !passwordTwo) return;
+
   if (password.length < 6) {
     Notify.success('Пароль не может быть меньше 6 знаков!');
-    return
+    return;
   }
   if (password !== passwordTwo) {
     Notify.success('Пароли не совпадают!');
-    return
+    return;
   }
 
   console.log('input.value', email); // удалить
@@ -54,6 +56,8 @@ async function onLoginForm(e) {
   const email = e.target.elements.userEmail.value;
   const password = e.target.elements.userPassword.value;
   localStorage.removeItem('userID');
+
+  if (!email || !password) return;
 
   await postUserId(email, password);
   const userId = await getUserId();
@@ -104,7 +108,7 @@ async function postUserId(email, pass) {
 
   // console.log('arrayOfUser', arrayOfUser); // удалить
   if (arrayOfUser) {
-    console.log('id ---->', arrayOfUser[0]);  // удалить
+    console.log('id ---->', arrayOfUser[0]); // удалить
     USER_ID = arrayOfUser[0];
     localStorage.setItem('userID', USER_ID);
   }

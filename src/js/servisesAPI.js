@@ -44,7 +44,7 @@ async function genresList(idGenres) {
       }
     });
   });
-  // console.log('arr', arrayOfGenres); // удалить
+  console.log('arr', arrayOfGenres); // удалить
 
   return;
 }
