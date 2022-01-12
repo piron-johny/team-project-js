@@ -49,7 +49,6 @@ async function onRegistrationForm(e) {
     }
   });
 }
-// postRegistration('Johny', 'piron.johny@gmail.com', '123456')
 
 async function onLoginForm(e) {
   e.preventDefault();
