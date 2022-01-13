@@ -4,6 +4,7 @@ const formLog = document.querySelector('#login-form-get');
 const userLogin = document.querySelector('.form__input[name=userName]');
 const userEmail = document.querySelector('.form__input[name=userEmail]');
 const userPassword = document.querySelector('.form__input[name=userPassword]');
+
 const SERVER_URL =
   'https://team-project-1da18-default-rtdb.europe-west1.firebasedatabase.app/users.json';
 
@@ -17,6 +18,9 @@ async function onSubmitForm(e) {
   const name = userLogin.value;
   const email = userEmail.value;
   const password = userPassword.value;
+  const watchedMovie = [0];
+  const queueMovie = [0];
+ 
 
   console.log('input.value', email);
   e.target.reset();
@@ -29,17 +33,19 @@ async function onSubmitForm(e) {
     console.log('Есть такой');
   } else {
     console.log('Запись в базу данных');
-    postRegistration(name, email, password);
+    postRegistration(name, email, password, watchedMovie, queueMovie);
   }
   arrayOfUserEmail.length = 0;
 }
 
-function postRegistration(name, email, pass) {
+function postRegistration(name, email, pass, watched, queued) {
   try {
     axios.post(SERVER_URL, {
       name,
       email,
       pass,
+      watched,
+      queued,
     });
   } catch (error) {
     console.log(error);
@@ -49,6 +55,7 @@ function postRegistration(name, email, pass) {
 async function getUser() {
   const data = await axios.get(SERVER_URL);
   const valuesOfData = Object.values(data.data);
+  console.log(data.data)
   valuesOfData.forEach(user => arrayOfUserEmail.push(user.email));
   return;
 }
